@@ -3,8 +3,8 @@ from flask_cors import CORS
 import torch
 import pickle
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
-
 import torch.nn as nn
+import os
 
 class POSTagger(nn.Module):
     def __init__(self, vocab_size, tagset_size, embed_dim=128, hidden_dim=256):
@@ -20,12 +20,12 @@ class POSTagger(nn.Module):
         lstm_out, _ = pad_packed_sequence(packed_output, batch_first=True)
         return self.fc(lstm_out)
 
-# Load the model
+
 def load_model(filename="pos_tagger.pkl"):
     with open(filename, "rb") as f:
         return pickle.load(f)
 
-# Initialize Flask app
+
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
@@ -78,7 +78,7 @@ def tag_sentence():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-import os
-port = int(os.environ.get("PORT", 10000))  # Render sets PORT dynamically
-app.run(host="0.0.0.0", port=port)
+
+port = int(os.environ.get("PORT", 5000))
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=port)
